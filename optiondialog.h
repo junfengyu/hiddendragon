@@ -8,7 +8,7 @@
 #include <logger.h>
 
 #include "ui_optiondialog.h"
-#include "modulemanager.h"
+
 
 class OptionDialog : public QDialog, public Ui::OptionDialog
     {
@@ -41,7 +41,7 @@ class OptionDialog : public QDialog, public Ui::OptionDialog
        // CryptoModuleInterface* currentCryptoModule();
         Data::DataFormat currentCharset();
       
-        void displayException(const QString& title, const HiddenDragonException e);
+        //void displayException(const QString& title, const HiddenDragonException e);
     
     private:
         void connectSignals();

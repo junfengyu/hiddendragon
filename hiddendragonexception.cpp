@@ -1,4 +1,5 @@
-#include "moduleexception.h"
+#include "hiddendragonexception.h"
+#include <QString>
 
 
     HiddenDragonException::HiddenDragonException(const QString& message) throw()

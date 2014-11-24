@@ -1,5 +1,6 @@
 #include "optiondialog.h"
 #include "controller.h"
+#include "hiddendragonexception.h"
 
 OptionDialog::OptionDialog(QWidget* parent)
         : QDialog(parent)
@@ -159,19 +160,7 @@ bool OptionDialog::isDialogReady()
         return true;
     }
 
-   // FormatModuleInterface* OptionDialog::currentFormatModule()
-   // {
-        /*
-        QString format = imageFormatComboBox->currentText();
-        FormatModuleInterface* module = (FormatModuleInterface*) ModuleManager::get(ModuleManager::IMAGEFORMAT, format);
-        if(module==NULL) {
-            m_logger->warning("Cannot find module for " + format + " image format" );
-        }
-      
 
-        return module;
-        */
-   // }
 /*
     CryptoModuleInterface* OptionDialog::currentCryptoModule()
     {
@@ -302,7 +291,7 @@ void OptionDialog::connectSignals()
       
         connect(fileRemoveButton, SIGNAL(pressed()), this, SLOT(removeFile()));
     }
-
+/*
     void OptionDialog::displayException(const QString& title,
                                         const HiddenDragonException e){
         QMessageBox msgBox;
@@ -313,4 +302,4 @@ void OptionDialog::connectSignals()
         msgBox.exec();
     }
 
-
+*/

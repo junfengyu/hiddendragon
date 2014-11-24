@@ -70,7 +70,7 @@ void DecodeDialog::ok()
         }
         */ //!!!!!!!!!!!!! ethan
 
-        CryptoModuleInterface* module = NULL;
+
        
         QDir dir;  
 		QString pwd = dir.absolutePath();
