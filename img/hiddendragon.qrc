@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>camera.png</file>
+        <file>crypto.png</file>
+        <file>decode.png</file>
+        <file>encode.png</file>
+        <file>linuxzealot.png</file>
+        <file>dropbox.png</file>
+        <file>empty.jpg</file>
+        <file>hiddendragon.ico</file>
+        <file>file.svg</file>
+        <file>open-file-icon.png</file>
+    </qresource>
+    <qresource prefix="/menu">
+        <file>quit.png</file>
+    </qresource>
+    <qresource prefix="/buttons">
+        <file>cancel.svg</file>
+        <file>ok.svg</file>
+    </qresource>
+</RCC>
