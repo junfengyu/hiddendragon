@@ -24,9 +24,7 @@ SOURCES += main.cpp\
     encodeddata.cpp \
     data.cpp \
     hiddendragonexception.cpp \
-    moduleexception.cpp \
     optiondialog.cpp \
-    modulemanager.cpp \
     decodedialog.cpp \
     encodedialog.cpp \
     bmpFile.cpp \
@@ -51,12 +49,7 @@ HEADERS  += mainwindow.h \
     encodeddata.h \
     data.h \
     hiddendragonexception.h \
-    moduleexception.h \
     optiondialog.h \
-    modulemanager.h \
-    formatmoduleinterface.h \
-    moduleinterface.h \
-    cryptomoduleinterface.h \
     decodedialog.h \
     encodedialog.h \
     bmpFile.h \

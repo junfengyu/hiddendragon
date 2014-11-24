@@ -103,7 +103,7 @@ void EncodeDialog::ok()
             Controller::config.save();
         }
 
-        CryptoModuleInterface* module;
+
       
             bool compress= false;
             QPointer<EncodedData> data;
