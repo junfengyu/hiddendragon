@@ -158,52 +158,24 @@ bool OptionDialog::isDialogReady()
         }
         */
         return true;
-    }
+}
 
 
-/*
-    CryptoModuleInterface* OptionDialog::currentCryptoModule()
-    {
-        QString type = cryptoComboBox->currentText();
-        return (CryptoModuleInterface*)ModuleManager::get(ModuleManager::CRYPTO, type);
-    }
-    */ //!!!!!!!!!!!! ethan
 
-    Data::DataFormat OptionDialog::currentCharset()
-    {
+Data::DataFormat OptionDialog::currentCharset()
+{
         Data::DataFormat charset = Data::UTF8;
 
         return charset;
-    }
+}
 
-    void OptionDialog::imageFormatChanged(const QString& imageFormat)
-    {
+void OptionDialog::imageFormatChanged(const QString& imageFormat)
+{
     	m_imageFormat = imageFormat;
-        /*
-        FormatModuleInterface* module = (FormatModuleInterface*) ModuleManager::get(ModuleManager::IMAGEFORMAT, imageFormat);
-        if(module==NULL) {
-            m_logger->warning("Cannot find module for " + imageFormat + " image format" );
-            return;
-        }
+}
 
-        QWidget* w = currentFormatWidget(module);
-
-        if(w!=NULL)
-        {
-            if(m_optionWidget!=NULL)
-                m_optionWidget->setVisible(false);
-            m_optionWidget = w;
-            //optionsVerticalLayout->insertWidget(0, m_optionWidget);
-            m_optionWidget->setVisible(true);
-        }
-        else
-            m_logger->warning("The widget for encoding format is NULL");
-
-        */
-    }
-
-    bool OptionDialog::checkCryptoPassword()
-    {
+bool OptionDialog::checkCryptoPassword()
+{
         QPalette palette;
         bool return_value = false;
 
@@ -220,7 +192,7 @@ bool OptionDialog::isDialogReady()
         cryptoPwd2LineEdit->setPalette(palette);
 
         return return_value;
-    }
+}
 
 
   
@@ -276,7 +248,7 @@ void OptionDialog::setupDialog()
 }
 
 void OptionDialog::connectSignals()
-    {
+{
         connect(okButton, SIGNAL(pressed()), this, SLOT(ok()));
         connect(this, SIGNAL(rejected()), this, SLOT(rejected()));
         connect(toolButton, SIGNAL(pressed()), this, SLOT(selectFolder()));
@@ -290,16 +262,17 @@ void OptionDialog::connectSignals()
 
       
         connect(fileRemoveButton, SIGNAL(pressed()), this, SLOT(removeFile()));
-    }
-/*
-    void OptionDialog::displayException(const QString& title,
-                                        const HiddenDragonException e){
+}
+
+void OptionDialog::displayException(const QString& title,
+                                        const HiddenDragonException e)
+{
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.setWindowTitle(title);
         msgBox.setText(e.message());
         msgBox.setDetailedText(e.details());
         msgBox.exec();
-    }
+}
 
-*/
+

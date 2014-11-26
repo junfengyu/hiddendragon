@@ -187,22 +187,13 @@ void MainWindow::copy()
 {
     if (m_hasImageLoaded)
     {
-        // QT Bug? fix in 4.6.1 ?
-        //QClipboard *clipboard = QApplication::clipboard();
-        //clipboard->clear();
-        //clipboard->setPixmap(*currentImage());
+
         //QMimeData *data = new QMimeData;
         //data->setImageData(currentImage()->toImage());
         //clipboard->setMimeData(data, QClipboard::Clipboard);
     }
 }
-/*
-void MainWindow::execPropertyDialog()
-{
-    propertyDialog.setImage(currentImage());
-    propertyDialog.exec();
-}
-*/
+
 
 void MainWindow::execEncodeDialog()
 {

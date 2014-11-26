@@ -1,6 +1,6 @@
 #include "decodedialog.h"
 #include "controller.h"
-
+#include "blackdragon/blackdragon.h"
 
 DecodeDialog::DecodeDialog(QWidget* parent)
         : OptionDialog(parent)
@@ -91,31 +91,32 @@ void DecodeDialog::ok()
 				}
 		}
         
-		
-
-		QString tmpFileName;
+        QString tmpFileName;
         tmpFileName.append(pwd);
 		tmpFileName.append("/");
         tmpFileName.append("tmp.dat");
         QFile file(tmpFileName);
 	    if (!file.open(QIODevice::ReadOnly)) 
                      return;
-        QByteArray decodedBuffer = file.readAll();
-        file.close();
-        char format=decodedBuffer.at(0);
+        QByteArray decodingBuffer = file.readAll();
+		file.close();
+
+        QByteArray decryptedData = BlackDragon::decode(cryptoPwd2LineEdit->text(), decodingBuffer.remove(0, 1));
+        
+        char format=decryptedData.at(0);
         if(format=='5'){
                     msgLabel->setText("Decoded file");
-                    decodedBuffer.remove(0, 1);
-                    int indexFileName=decodedBuffer.indexOf("<",1);
-                    QByteArray getFileName=decodedBuffer.left(indexFileName);
+                    decryptedData.remove(0, 1);
+                    int indexFileName=decryptedData.indexOf("<",1);
+                    QByteArray getFileName=decryptedData.left(indexFileName);
                     QString decodedMsgFileName;
                     decodedMsgFileName.append(pwd);
                     decodedMsgFileName.append("/");
                     decodedMsgFileName.append(QTextCodec::codecForMib(106)->toUnicode(getFileName));
-                    decodedBuffer.remove(0,indexFileName+1);
+                    decryptedData.remove(0,indexFileName+1);
                     QFile file(decodedMsgFileName);
                     file.open(QIODevice::WriteOnly);
-                    file.write(decodedBuffer);
+                    file.write(decryptedData);
                     file.close();
 
                     m_filePath = decodedMsgFileName;
@@ -127,8 +128,15 @@ void DecodeDialog::ok()
         }
         else if(format=='2'){
                     msgLabel->setText("Decoded message");
-                    decodedBuffer.remove(0, 1);
-                    QString dataAsString = QTextCodec::codecForMib(106)->toUnicode(decodedBuffer);
+                    decryptedData.remove(0, 1);
+                    //QString dataAsString = QTextCodec::codecForMib(106)->toUnicode(decryptedData);
+
+
+                    char* decryptedStr = decryptedData.data();
+
+
+                    QString dataAsString=QString::fromAscii(decryptedStr);
+
                     msgTextEdit->setText(dataAsString);
                     msgTextEdit->setVisible(true);
                     fileWidget->setVisible(false);
@@ -137,10 +145,6 @@ void DecodeDialog::ok()
                     QMessageBox::warning(this, tr("HiddenDragon Warning"),
                                      "This image don't seem to have an hidden message.");
         }
-
-
-
-
 
 }
 

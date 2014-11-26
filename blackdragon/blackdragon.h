@@ -12,12 +12,12 @@
 #include "blackdragon/defs.h"
 #include "blackdragon/bd.h"
 class BlackDragon{
-private:
-    static unsigned char* longToByteArray(ulonglong value);
-    static void XORulonglong(QByteArray source, QByteArray &target, QByteArray &key, int length);
-public:
-    static QPointer<EncodedData> encode(QString key, QPointer<EncodedData> msg);
-    static QPointer<EncodedData> decode(QString key, QPointer<EncodedData> data);
+    private:
+        static char* longToByteArray(ulonglong value);
+        static void XOR(QByteArray source, QByteArray &target, QByteArray &key, int length);
+    public:
+        static QPointer<EncodedData> encode(QString key, QPointer<EncodedData> msg);
+        static QByteArray decode(QString key, QByteArray &encodedData);
 };
 
 #endif // BLACKDRAGON_H
