@@ -1,71 +1,72 @@
 #include "config.h"
 
 
-    Config::Config()
-    {
+Config::Config()
+{
         m_isLoaded = false;
         m_filename = "se-noname.conf";
         m_filepath = "/tmp/";
-    }
+}
 
-    Config::Config(QString filePath, QString filename)
-    {
+Config::Config(QString filePath, QString filename)
+{
         m_filename = filename+".conf";
         m_filepath = filePath;
 
         m_isLoaded = load();
-    }
+}
 
-    Config::~Config(){
-        // NOTHING TO DO
-    }
+Config::~Config()
+{
 
-    QString Config::filename() const
-    {
+}
+
+QString Config::filename() const
+{
         return m_filename;
-    }
+}
 
-    QString Config::filepath() const
-    {
+QString Config::filepath() const
+{
         return m_filepath;
-    }
+}
 
-    QMap<QString, QString> Config::values() const
-    {
+QMap<QString, QString> Config::values() const
+{
         return m_valueMap;
-    }
+}
 
-    Config::Config(const Config& config)
-    {
+Config::Config(const Config& config)
+{
         m_filename = config.filename();
         m_valueMap = config.values();
-    }
+}
 
-    bool Config::isLoaded() const
-    {
+bool Config::isLoaded() const
+{
         return m_isLoaded;
-    }
+}
 
-    bool Config::contains(QString name) const
-    {
+bool Config::contains(QString name) const
+{
         return m_valueMap.contains(name);
-    }
+}
 
-    void Config::set(QString name, QString value)
-    {
+void Config::set(QString name, QString value)
+{
         m_valueMap[name] = value;
-    }
+}
 
-    QString Config::get(QString name) const
-    {
+QString Config::get(QString name) const
+{
         if (m_valueMap.contains(name))
             return m_valueMap.value(name);
         else
             return QString();
-    }
+}
 
-    void Config::save()
-    {
+void Config::save()
+{
         QDomDocument doc( "HiddenDragon" );
         QDomElement root = doc.createElement("configuration");
         doc.appendChild(root);
@@ -91,10 +92,10 @@
         /* Profile serialize datas */
         ts << doc.toString();
         file.close();
-    }
+}
 
-    bool Config::load()
-    {
+bool Config::load()
+{
         QDomDocument doc( "HiddenDragon" );
 
         QFile file(m_filepath+m_filename);
@@ -126,14 +127,14 @@
             qWarning() << "Can't open configuration file: " << m_filepath+m_filename;
 
         return false;
-    }
+}
 
-    Config& Config::operator=(const Config& config)
-                             {
+Config& Config::operator=(const Config& config)
+{
         m_filename = config.filename();
         m_filepath = config.filepath();
         m_valueMap = config.values();
         return *this;
-    }
+}
 
 

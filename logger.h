@@ -8,8 +8,8 @@
 
 
     //! Provides methods for multi-level logging into logfile and console
-    class Logger : public QObject
-    {
+class Logger : public QObject
+{
     public:
         enum LogLevel{ DEBUG_LEVEL=1, INFO_LEVEL=5, WARNING_LEVEL=10, ERROR_LEVEL=15 };
 
@@ -40,7 +40,7 @@
     private:
         void init();
         void write(QString priority, QString text);
-    };
+};
 
 
 #endif // LOGGER_H

@@ -4,8 +4,8 @@
 
 
 
-        Data::Data(const QByteArray& bytes, const DataFormat format)
-        {
+Data::Data(const QByteArray& bytes, const DataFormat format)
+{
             this->setObjectName("Data");
             m_logger = new Logger(this);
             if (format == UINT32)
@@ -43,44 +43,44 @@
                     m_data = rawbytes;
                 }
             }
-        }
+}
 
-        Data::Data(const DataFormat format)
+Data::Data(const DataFormat format)
             : m_format(format)
-        {
+{
             this->setObjectName("Data");
             m_logger = new Logger(this);
-        }
+}
 
-        Data::Data(const DataFormat format, const QByteArray& data, const QString name)
+Data::Data(const DataFormat format, const QByteArray& data, const QString name)
             : m_format(format), m_name(name), m_data(data)
-        {
+{
             this->setObjectName("Data");
             m_logger = new Logger(this);
-        }
+}
 
-        Data::~Data()
-        {
+Data::~Data()
+{
             delete m_logger;
-        }
+}
 
-        Data::DataFormat Data::format() const
-        {
+Data::DataFormat Data::format() const
+{
             return m_format;
-        }
+}
 
-        QString Data::name() const
-        {
+QString Data::name() const
+{
             return m_name;
-        }
+}
 
-        QByteArray Data::data() const
-        {
+QByteArray Data::data() const
+{
             return m_data;
-        }
+}
 
-        QByteArray Data::toByteArray() const
-        {
+QByteArray Data::toByteArray() const
+{
             QByteArray bytes = m_data;
             switch(m_format)
             {
@@ -100,5 +100,5 @@
             }
 
             return bytes;
-        }
+}
 

@@ -5,12 +5,6 @@
 #include "hiddendragonexception.h"
 
 
-    //! Create an empty object (without any data)
-    /*!
-        This constructor is used with append function and constitute a partial data.
-        \param format Specify data format
-        \param compress Specify whether the data should be compressed
-    */
 EncodedData::EncodedData(Data::DataFormat format, bool compress)
         : _compressed(compress)
 {
@@ -24,12 +18,7 @@ EncodedData::EncodedData(Data::DataFormat format, bool compress)
         _partialData = true;
 }
 
-    //! Create an object from existing bytes
-    /*!
-        \param bytes Uncompressed data
-        \param format When format is set to F_UNDEF, constructor try to determine it from bytes
-        \param compress Specify whether the data should be compressed
-    */
+
 EncodedData::EncodedData(const QByteArray bytes, Data::DataFormat format, bool compress)
         : _compressed(compress)
 {
@@ -51,11 +40,6 @@ EncodedData::EncodedData(const QByteArray bytes, Data::DataFormat format, bool c
         _partialData = false;
 }
 
-    //! Create an object from an integer
-    /*!
-        \param value Interger to encode
-        \param compress Specify whether the data should be compressed
-    */
 EncodedData::EncodedData(const quint32 value, bool compress)
         : _compressed(compress)
 {
@@ -80,12 +64,7 @@ EncodedData::EncodedData(const quint32 value, bool compress)
         _partialData = false;
 }
 
-    //! Create an object from an String
-    /*!
-        \param str String to encode
-        \param format String format(UTF9, LATIN1, ASCII)
-        \param compress Specify whether the data should be compressed
-    */
+
 EncodedData::EncodedData(const QString& str, Data::DataFormat format, bool compress)
         : _compressed(compress)
 {
@@ -111,11 +90,6 @@ EncodedData::EncodedData(const QString& str, Data::DataFormat format, bool compr
         _partialData = false;
 }
 
-    //! Create an object from an existing file
-    /*!
-        \param file Existing file which will be open, read and close.
-        \param compress Specify whether the data should be compressed
-    */
 EncodedData::EncodedData(QFile& file, bool compress)
         : _compressed(compress)
 {
@@ -138,14 +112,13 @@ EncodedData::EncodedData(QFile& file, bool compress)
         _partialData = false;
 }
 
-    //! Destructor: object cleaning
 EncodedData::~EncodedData()
 {
         if (!_data.isNull())
             delete _data;
 }
 
-    //! Use buffer to compute data if needed
+
 void EncodedData::checkPartialData()
 {
         if(_partialData)
@@ -159,28 +132,22 @@ void EncodedData::checkPartialData()
         }
 }
 
-    //! Returns format of current data
-    /*! \return data format (UTF8, FILE, ...) */
-    Data::DataFormat EncodedData::format()
-    {
+
+Data::DataFormat EncodedData::format()
+{
         checkPartialData();
         return _data->format();
-    }
+}
 
-    //! Returns current compression mode
-    /*! \return current compression mode */
-    bool EncodedData::isCompressed() const
-    {
+
+bool EncodedData::isCompressed() const
+{
         return _compressed;
-    }
+}
 
-    //! Change compression mode
-    /*!
-        \param compress new compression mode
-        \param force Indicate that we have to change current data
-     */
-    void EncodedData::setCompressed(const bool compress, const bool force)
-    {
+
+void EncodedData::setCompressed(const bool compress, const bool force)
+{
         if(force)
         {
             if(!_compressed && compress)
@@ -194,25 +161,21 @@ void EncodedData::checkPartialData()
         }
         _compressed = compress;
 
-    }
+}
 
-    //! Returns ByteArray representation of encoded data
-    /*! \return current data array */
-    QByteArray EncodedData::bytes()
-    {
+
+QByteArray EncodedData::bytes()
+{
         return _buffer;
-    }
+}
 
-    //! Returns current encoded data size
-    /*! \return data size */
-    quint32 EncodedData::size() const
-    {
+quint32 EncodedData::size() const
+{
         return _buffer.size();
-    }
+}
 
-    //! Remove data and cancel all current operation
-    void EncodedData::clear()
-    {
+void EncodedData::clear()
+{
         _arrayCount = 0;
         _bitCount = 0;
         _car = 0;
@@ -224,37 +187,31 @@ void EncodedData::checkPartialData()
             delete _data;
         }
         _data = new Data(format);
-    }
+}
 
-    //! Initialize data for read (or append)
-    /*! \param nbBits number of bits to use at once */
-    void EncodedData::initialize(unsigned short int nbBits)
-    {
+
+void EncodedData::initialize(unsigned short int nbBits)
+{
         _swap = nbBits;
         _andOperator = andOperator(_swap);
         _arrayCount = 0;
         _bitCount = 0;
         if(_buffer.size()>0)
             _car = _buffer.at(0);
-    }
+}
 
-    //! Indicate if there is some next bit to read
-    /*! \return true when more data are available */
-    bool EncodedData::hasNext()
-    {
+
+bool EncodedData::hasNext()
+{
         if(_buffer.size() == 0)
             return false;
         else
             return (_arrayCount < (unsigned int)_buffer.size());
-    }
+}
 
-    //! Read next available bits
-    /*!
-        \return integer representation of bits read (little indian).
-        0 if none available
-    */
-    int EncodedData::read()
-    {
+
+int EncodedData::read()
+{
         int val = 0;
         if(hasNext())
         {
@@ -295,12 +252,10 @@ void EncodedData::checkPartialData()
             }
         }
         return val;
-    }
+}
 
-    //! Append value into current data
-    /*! \param val integer representation of bits to add (little indian) */
-    void EncodedData::append(int val)
-    {
+void EncodedData::append(int val)
+{
         _partialData = true;
 
         int bitsLeft = 8 - _bitCount;
@@ -331,12 +286,11 @@ void EncodedData::checkPartialData()
             _car += val;
             _bitCount += bitsRemaining;
         }
-    }
+}
 
-    //! Convert data into unsigned int (32bits)
-    /*! \return uint32 representation */
-    quint32 EncodedData::toUInt32()
-    {
+
+quint32 EncodedData::toUInt32()
+{
         checkPartialData();
 
         quint32 value = 0;
@@ -345,15 +299,11 @@ void EncodedData::checkPartialData()
             value += ((uchar)bytes.at(i))<<(i*8);
 
         return value;
-    }
+}
 
-    //! Convert data into string if possible
-    /*!
-      \param format force format output
-      \return String representation
-    */
-    QString EncodedData::toString(Data::DataFormat format)
-    {
+
+QString EncodedData::toString(Data::DataFormat format)
+{
         checkPartialData();
         Data::DataFormat dataFormat = _data->format();
         if(format!=Data::F_UNDEF)
@@ -376,24 +326,18 @@ void EncodedData::checkPartialData()
             return _data->name();
 
         return "unsupported format(" + QString::number(dataFormat) + ") for string conversion.";
-    }
+}
 
-    //! Retreive the current Data
-    /*! \return pointer on current data */
-    QPointer<Data> EncodedData::toData()
-    {
+
+QPointer<Data> EncodedData::toData()
+{
         checkPartialData();
         return _data;
-    }
+}
 
-    //! Compute value to use for "and" operator
-    /*!
-      \param nbBits number of bits to use
-      \return "and" operator value
-    */
-    unsigned short int EncodedData::andOperator(unsigned short int nbBits)
-    {
+unsigned short int EncodedData::andOperator(unsigned short int nbBits)
+{
         return (int)pow(2, nbBits)-1;
-    }
+}
 
 

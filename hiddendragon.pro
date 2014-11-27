@@ -27,7 +27,6 @@ SOURCES += main.cpp\
     optiondialog.cpp \
     decodedialog.cpp \
     encodedialog.cpp \
-    bmpFile.cpp \
     jpeg/arc.c \
     jpeg/err.c \
     jpeg/golay.c \
@@ -53,7 +52,6 @@ HEADERS  += mainwindow.h \
     optiondialog.h \
     decodedialog.h \
     encodedialog.h \
-    bmpFile.h \
     imagewidget.h \
     jpeg/arc.h \
     jpeg/config.h \

@@ -41,8 +41,11 @@ QPointer<EncodedData> BlackDragon::encode(QString key, QPointer<EncodedData> msg
 	QByteArray encodedMsg= QByteArray(msgLength,0);
     QByteArray ksArray=QByteArray();
    // QByteArray &originalMsg;
-		
-	ulong masterkey_ulong[]={0,0,0,0};
+    ulong masterkey_ulong[4]={0,0,0,0};
+    QString masterKeyString = key.left(4);
+    QByteArray masterKeyArray = masterKeyString.toUtf8 ();
+    for(int i=0;i<4;i++)
+        masterkey_ulong[i]=(ulong)masterKeyArray.at(i);
 	ulonglong* ks = (ulonglong*)malloc((dataLength)*sizeof(ulonglong));
 			    
     //generate keystream
@@ -53,11 +56,7 @@ QPointer<EncodedData> BlackDragon::encode(QString key, QPointer<EncodedData> msg
     BD_keystream(&ctx, ks, kslength);
     ksByteArray=(unsigned char*)ks;
     ksArray.insert(0,ksByteArray,msgLength);
-    /*for(i=0;i<dataLength;i++){
-        ksArray.append((char *)ksByteArray); //(longToByteArray(ks[i])
-
-    }*/
-    //originalMsg=msg->bytes();
+  
     XOR(msg->bytes(), encodedMsg, ksArray, msgLength);
 	delete msg;
 
@@ -80,9 +79,14 @@ QByteArray BlackDragon::decode(QString key, QByteArray &encodedData)
     ulong iv[] = { 0, 0, 0, 0 };
     QByteArray decodedMsg= QByteArray(msgLength,0);
     QByteArray ksArray=QByteArray();
-   // QByteArray &originalMsg;
+  
     unsigned char* ksByteArray;
-    ulong masterkey_ulong[]={0,0,0,0};
+    ulong masterkey_ulong[4]={0,0,0,0};
+    QString masterKeyString = key.left(4);
+    QByteArray masterKeyArray = masterKeyString.toUtf8 ();
+    for(int i=0;i<4;i++)
+        masterkey_ulong[i]=(ulong)masterKeyArray.at(i);
+
     ulonglong* ks = (ulonglong*)malloc((dataLength)*sizeof(ulonglong));
 
     //generate keystream
@@ -93,10 +97,7 @@ QByteArray BlackDragon::decode(QString key, QByteArray &encodedData)
     BD_keystream(&ctx, ks, kslength);
     ksByteArray=(unsigned char*)ks;
     ksArray.insert(0,ksByteArray,msgLength);
-    /*int i=0;
-    for(i=0;i<dataLength;i++){
-      ksArray.append((char*)ksByteArray);
-    }*/
+  
     XOR(encodedData, decodedMsg, ksArray, msgLength);
     return decodedMsg;
 
