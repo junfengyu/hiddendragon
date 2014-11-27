@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     jpeg/pnm.c \
     blackdragon/aes-tables.c \
     blackdragon/bd.c \
-    blackdragon/blackdragon.cpp
+    blackdragon/blackdragon.cpp \
+    bmp/bmpsteg.cpp
 
 HEADERS  += mainwindow.h \
     aboutdialog.h \
@@ -69,7 +70,8 @@ HEADERS  += mainwindow.h \
     jpeg/pnm.h \
     blackdragon/bd.h \
     blackdragon/defs.h \
-    blackdragon/blackdragon.h
+    blackdragon/blackdragon.h \
+    bmp/bmpsteg.h
 
 FORMS    += \
     ui/mainwindow.ui \
@@ -97,3 +99,13 @@ DEPENDPATH += $$PWD/jpeg
 
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/jpeg/lib/mman.lib
 else:win32-g++: PRE_TARGETDEPS += $$PWD/jpeg/lib/libmman.a
+
+
+
+INCLUDEPATH += D:\\opencv-2.4.5\\build\\install\\include
+
+LIBS+= -LD:\\opencv-2.4.5\\build\\install\\lib \
+    -lopencv_core245.dll\
+    -lopencv_highgui245.dll\
+    -lopencv_imgproc245.dll
+

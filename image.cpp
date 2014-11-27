@@ -1,5 +1,5 @@
 #include "image.h"
-#include "bmpFile.h"
+#include "bmp/bmpsteg.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -218,7 +218,7 @@
 		 if(m_imageFormat==QString("bmp"))
 		 {
 
-			 BmpFile bm(charFilePath);
+             BmpSteg bm(charFilePath);
 		
 		
 		 	if( bm.unhide(charFilePath, chartmpFileName) == 0 )
@@ -388,7 +388,7 @@ bool Image::EncoderHandler( QString imageFormat,  QString outputPath)
 		}
 		if(m_imageFormat==QString("bmp"))
 		{
-				BmpFile bm(charFilePath);
+                BmpSteg bm(charFilePath);
 				if( bm.hide(charFilePath, chartmpFileName, charOutPutFile) == 0 )
 		        {
 			        printf("Hidding done.\n");
