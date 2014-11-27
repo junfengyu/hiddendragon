@@ -102,6 +102,7 @@ void DecodeDialog::ok()
 		file.close();
 
         QByteArray decryptedData = BlackDragon::decode(cryptoPwd2LineEdit->text(), decodingBuffer.remove(0, 1));
+      //  QByteArray &decryptedData = decodingBuffer;
         
         char format=decryptedData.at(0);
         if(format=='5'){
@@ -120,6 +121,7 @@ void DecodeDialog::ok()
                     file.close();
 
                     m_filePath = decodedMsgFileName;
+					m_fileShortName=QTextCodec::codecForMib(106)->toUnicode(getFileName);
                     fileNameLabel->setText(QTextCodec::codecForMib(106)->toUnicode(getFileName)); //m_filePath;
                     msgTextEdit->setVisible(false);
                     fileWidget->setVisible(true);

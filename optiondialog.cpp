@@ -75,15 +75,20 @@ void OptionDialog::selectFile()
             {
                 if (save)
                 {
-                	QString hiddenFileName;
-                    QFile file(fileNames.at(0) + "/" + m_filePath);
+                    QDir dir;
+                    QString pwd = dir.absolutePath();
+                    pwd.append("/");
+                    pwd.append(m_fileShortName);
+                    QFile filein(pwd);
+
+                    if (!filein.open(QIODevice::ReadOnly)) return;
+                    QByteArray fileInArray = filein.readAll();
+                    filein.close();
+
+                    QFile file(fileNames.at(0) + "/" + m_fileShortName);
                     file.open(QFile::WriteOnly);
-                    file.write(m_img->data()->toData()->data());
+                    file.write(fileInArray);
                     file.close();
-
-					
-
-					
                     QMessageBox::information(this, tr("HiddenDragon Information"),
                                              "Decoded file has been saved to:\n" + file.fileName() + ".");
                 }
@@ -123,6 +128,7 @@ void OptionDialog::addFile(const QString& filename)
 void OptionDialog::removeFile()
 {
     m_filePath = "";
+	m_fileShortName = "";
     fileNameLabel->setText("no file selected");
     fileRemoveButton->setEnabled(false);
     msgTextEdit->setEnabled(true);

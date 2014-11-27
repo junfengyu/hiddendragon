@@ -35,7 +35,7 @@ QPointer<EncodedData> BlackDragon::encode(QString key, QPointer<EncodedData> msg
 		dataLength = msgLength/8+1;
 	else dataLength= msgLength/8;
 	int kslength= dataLength/2;
-
+    unsigned char* ksByteArray;
 	  //allocate and initiate
     ulong iv[] = { 0, 0, 0, 0 };
 	QByteArray encodedMsg= QByteArray(msgLength,0);
@@ -51,11 +51,12 @@ QPointer<EncodedData> BlackDragon::encode(QString key, QPointer<EncodedData> msg
     BD_initkey(&ctx, masterkey_ulong);
     BD_initiv(&ctx, iv);
     BD_keystream(&ctx, ks, kslength);
-	int i=0;
-	for(i=0;i<dataLength;i++){
-        ksArray.append((longToByteArray(ks[i])));
+    ksByteArray=(unsigned char*)ks;
+    ksArray.insert(0,ksByteArray,msgLength);
+    /*for(i=0;i<dataLength;i++){
+        ksArray.append((char *)ksByteArray); //(longToByteArray(ks[i])
 
-    }
+    }*/
     //originalMsg=msg->bytes();
     XOR(msg->bytes(), encodedMsg, ksArray, msgLength);
 	delete msg;
@@ -80,7 +81,7 @@ QByteArray BlackDragon::decode(QString key, QByteArray &encodedData)
     QByteArray decodedMsg= QByteArray(msgLength,0);
     QByteArray ksArray=QByteArray();
    // QByteArray &originalMsg;
-
+    unsigned char* ksByteArray;
     ulong masterkey_ulong[]={0,0,0,0};
     ulonglong* ks = (ulonglong*)malloc((dataLength)*sizeof(ulonglong));
 
@@ -90,13 +91,13 @@ QByteArray BlackDragon::decode(QString key, QByteArray &encodedData)
     BD_initkey(&ctx, masterkey_ulong);
     BD_initiv(&ctx, iv);
     BD_keystream(&ctx, ks, kslength);
-    int i=0;
+    ksByteArray=(unsigned char*)ks;
+    ksArray.insert(0,ksByteArray,msgLength);
+    /*int i=0;
     for(i=0;i<dataLength;i++){
-      ksArray.append((longToByteArray(ks[i])));
-    }
-    //originalMsg=msg->bytes();
+      ksArray.append((char*)ksByteArray);
+    }*/
     XOR(encodedData, decodedMsg, ksArray, msgLength);
-
     return decodedMsg;
 
 }

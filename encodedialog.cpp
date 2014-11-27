@@ -119,7 +119,7 @@ void EncodeDialog::ok()
                 data = new EncodedData(msgTextEdit->toPlainText(), currentCharset(), compress);
             }
 
-			data = BlackDragon::encode(cryptoPwd2LineEdit->text(), data);
+            data = BlackDragon::encode(cryptoPwd2LineEdit->text(), data);
 
      			   
             if(output+"/"+m_img->shortName() == m_img->filePath())

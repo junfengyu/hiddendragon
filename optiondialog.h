@@ -19,6 +19,7 @@ class OptionDialog : public QDialog, public Ui::OptionDialog
 
         QPointer<Image> m_img;
         QString m_filePath;
+		QString m_fileShortName;
 		QString m_imageFormat;
     
         bool m_checkSize;
