@@ -122,7 +122,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../img/hiddendragon.qrc">:/icons/empty.jpg</pixmap>
+      <pixmap resource="../img/hiddendragon.qrc">:/icons/wallpaper.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>

@@ -50,7 +50,7 @@ class Image : public QPixmap, public QObject
         int imgHeight() const;
         bool EncoderHandler(QString imageFormat, QString outputPath);
 		bool DecoderHandler(QString imageFormat, QString outputPath);
-        virtual quint32 capacity() const;
+        long capacity(QString imageFormat);
 
         virtual bool load();
         virtual bool compile();

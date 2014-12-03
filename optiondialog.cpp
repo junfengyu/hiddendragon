@@ -13,7 +13,7 @@ OptionDialog::OptionDialog(QWidget* parent)
         m_originalHeight = minimumHeight();
         loadImageFormats();
         loadEncryptionTypes();
-
+        valueChanged();
         setupDialog();
         connectSignals();
 }
@@ -178,6 +178,7 @@ Data::DataFormat OptionDialog::currentCharset()
 void OptionDialog::imageFormatChanged(const QString& imageFormat)
 {
     	m_imageFormat = imageFormat;
+        valueChanged();
 }
 
 bool OptionDialog::checkCryptoPassword()
@@ -203,17 +204,33 @@ bool OptionDialog::checkCryptoPassword()
 
   
 
-    void OptionDialog::cryptoPwd1TextEdited(QString)
-    {
+void OptionDialog::cryptoPwd1TextEdited(QString)
+{
         checkCryptoPassword();
-    }
+}
 
-    void OptionDialog::cryptoPwd2TextEdited(QString)
-    {
+void OptionDialog::cryptoPwd2TextEdited(QString)
+{
         checkCryptoPassword();
+}
+
+
+void OptionDialog::valueChanged()
+{
+    long total=0;
+    if(m_img==NULL)
+        return;
+    if(multiImageBox->isChecked())
+    {
+
     }
+    else
+    {
+       total=m_img->capacity(m_imageFormat);
 
-
+    }
+    capacityLabel->setText("Capacity:"+QString::number(total)+"Bytes");
+}
 
 
 void OptionDialog::loadImageFormats()
@@ -265,7 +282,7 @@ void OptionDialog::connectSignals()
                 this, SLOT(cryptoPwd2TextEdited(QString)));
         connect(imageFormatComboBox, SIGNAL(currentIndexChanged(const QString&)),
                 this, SLOT(imageFormatChanged(const QString&)));
-
+        connect(multiImageBox,SIGNAL(stateChanged(int)),this,SLOT(valueChanged()));
       
         connect(fileRemoveButton, SIGNAL(pressed()), this, SLOT(removeFile()));
 }

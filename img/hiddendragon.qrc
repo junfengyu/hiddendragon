@@ -10,12 +10,15 @@
         <file>hiddendragon.ico</file>
         <file>file.svg</file>
         <file>open-file-icon.png</file>
+        <file>background.jpg</file>
+        <file>wallpaper.png</file>
     </qresource>
     <qresource prefix="/menu">
         <file>quit.png</file>
     </qresource>
     <qresource prefix="/buttons">
         <file>cancel.svg</file>
+        <file>close.png</file>
         <file>ok.svg</file>
     </qresource>
 </RCC>

@@ -10,6 +10,7 @@ QT       += xml
 QMAKE_CXXFLAGS += -fpermissive
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += network
 
 TARGET = hiddendragon
 TEMPLATE = app
@@ -38,7 +39,8 @@ SOURCES += main.cpp\
     blackdragon/aes-tables.c \
     blackdragon/bd.c \
     blackdragon/blackdragon.cpp \
-    bmp/bmpsteg.cpp
+    bmp/bmpsteg.cpp \
+    splitfile.cpp
 
 HEADERS  += mainwindow.h \
     aboutdialog.h \
@@ -69,14 +71,17 @@ HEADERS  += mainwindow.h \
     blackdragon/bd.h \
     blackdragon/defs.h \
     blackdragon/blackdragon.h \
-    bmp/bmpsteg.h
+    bmp/bmpsteg.h \
+    splitfile.h \
+    dbg.h
 
 FORMS    += \
     ui/mainwindow.ui \
     ui/aboutdialog.ui \
     ui/imagewidget.ui \
     ui/camera.ui \
-    ui/optiondialog.ui
+    ui/optiondialog.ui \
+    ui/dropboxdialog.ui
 
 RESOURCES += \
     img/hiddendragon.qrc
@@ -106,4 +111,8 @@ LIBS+= -LD:\\opencv-2.4.5\\build\\install\\lib \
     -lopencv_core245.dll\
     -lopencv_highgui245.dll\
     -lopencv_imgproc245.dll
+
+INCLUDEPATH +=D:\\WorkSpace\\SourceCode\\c++lib\\QtDropbox-qt4.8\\src
+LIBS += -LD:\\WorkSpace\\SourceCode\\c++lib\\QtDropbox-qt4.8\\src \
+     -lQtDropbox
 

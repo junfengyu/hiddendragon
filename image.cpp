@@ -164,9 +164,114 @@
         return m_height;
     }
 
-    quint32 Image::capacity() const
+    long Image::capacity(QString imageFormat)
     {
-        return 0;
+        long cap=0;
+        QString tmpFile=m_filePath;
+        tmpFile.replace(QString("."),QString("tmp."));
+        char *charFilePath= new char[m_filePath.toStdString().size()+1];
+        strcpy(charFilePath,m_filePath.toStdString().c_str());
+        char *charTmpFilePath=new char[tmpFile.toStdString().size()+1];
+        strcpy(charTmpFilePath,tmpFile.toStdString().c_str());
+        m_imageFormat=imageFormat;
+        if(m_imageFormat==QString("BMP"))
+        {
+            if(m_filePath.endsWith("bmp"))
+            {
+                BmpSteg bm(charFilePath);
+                cap=bm.getBmpFileCapacity(charFilePath);
+            }
+        }else if(m_imageFormat==QString("JPEG"))
+        {
+            if(m_filePath.endsWith("jpg"))
+            {
+                FILE *fin = stdin, *fout = stdout;
+                image *image;
+                handler *srch = NULL, *dsth = NULL;
+                char *param = NULL;
+                bitmap bitmap;
+                config cfg1, cfg2;
+                char mark = 0, doretrieve = 0;
+                char doerror = 0, doerror2 = 0;
+
+                int extractonly = 0, foil = 1;
+
+                steg_stat = 0;
+
+                memset(&cfg1, 0, sizeof(cfg1));
+                memset(&cfg2, 0, sizeof(cfg2));
+                char *input_file_name=charFilePath;
+                char *outputFileName= charTmpFilePath;
+                fin = fopen(input_file_name, "rb");
+                if (fin == NULL) {
+                    fprintf(stderr, "Can't open input file '%s': ",
+                    input_file_name);
+                    perror("fopen");
+                    return 0;
+                }
+                fout = fopen(outputFileName, "wb");
+                            if (fout == NULL) {
+                                fprintf(stderr, "Can't open output file '%s': ",
+                                    outputFileName);
+                                perror("fopen");
+                                return false;
+                            }
+
+                srch = get_handler(input_file_name);
+                if (srch == NULL) {
+                    fprintf(stderr, "Unknown data type of %s\n", input_file_name);
+                    return false;
+                }
+
+                dsth = get_handler(outputFileName);
+                if (dsth == NULL) {
+                     fprintf(stderr, "Unknown data type of %s\n",
+                                outputFileName);
+                            return false;
+                }
+
+            /* Initialize Golay-Tables for 12->23 bit error correction */
+                if (doerror || doerror2) {
+                    fprintf(stderr, "Initalize encoding/decoding tables\n");
+                  init_golay();
+                }
+
+                fprintf(stderr, "Reading %s....\n", input_file_name);
+                image = srch->read(fin);
+
+
+
+                dsth->init(param);
+
+                dsth->get_bitmap(&bitmap, image, 0);
+
+                fprintf(stderr, "Extracting usable bits:   %d bits\n", bitmap.bits);
+
+                if (doerror)
+                    cfg1.flags |= STEG_ERROR;
+
+                if (!doretrieve) {
+                 if (mark)
+                    cfg1.flags |= STEG_MARK;
+                    if (foil) {
+                    dsth->preserve(&bitmap, -1);
+                    if (bitmap.maxcorrect)
+                   // cap=(long)bitmap.maxcorrect/8;
+                     cap=(long)100*bitmap.maxcorrect/bitmap.bits;
+
+                    }
+
+                    fclose(fin);
+                    fclose(fout);
+
+                    free(bitmap.bitmap);
+                    free(bitmap.locked);
+                    free_pnm(image);
+                }
+            }
+        }
+        delete charFilePath;
+        return cap;
     }
 
     bool Image::compile()
@@ -277,6 +382,7 @@
             	fprintf(stderr, "Unknown data type of %s\n", image_file_path);
             	return false;
     		}
+
 
     		fin = fopen(image_file_path, "rb");
     		if (fin == NULL) {

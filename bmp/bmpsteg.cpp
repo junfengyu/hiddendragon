@@ -272,3 +272,23 @@ int BmpSteg::unhide (char *bmpfile, char *msgfile)
             }
 }
 
+long BmpSteg::getBmpFileCapacity(char *bmpfile)
+{
+    int i,j,k,l,t;
+    IplImage* coverimg = cvLoadImage(bmpfile);
+    IplImage* stegoimg = coverimg;
+
+    CvScalar pix;
+    int h=coverimg->height;
+    int w=coverimg->width;
+
+    int nchannel = 3;
+    int nplane = 3;
+    int charsize = 8; //a character has 8 bits
+
+
+    int messagelength;
+    char *message;
+    long maxFileSize=(long)(h*w*nchannel*nplane/charsize);
+    return maxFileSize;
+}

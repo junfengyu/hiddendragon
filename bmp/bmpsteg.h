@@ -1,7 +1,6 @@
 #ifndef BMPSTEG_H
 #define BMPSTEG_H
 
-
 class BmpSteg
 {
 public:
@@ -11,7 +10,8 @@ public:
         int isFileExist(char *filename);								//checking file existence
 
         int hide(char *bmpfile, char *msgfile, char *output);			//hidding job *
-        int unhide(char *bmpfile,char *msgfile);						//unhidding job *
+        int unhide(char *bmpfile,char *msgfile);
+
 
         long getBmpFileCapacity(char *bmpfile);
 private:

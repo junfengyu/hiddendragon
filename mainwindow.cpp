@@ -46,6 +46,11 @@ void MainWindow::addImageTab(QPointer<Image> img)
     w->setContextMenu(contextMenu);
     closeTabButton->setVisible(true);
     m_imageMap[img->shortName()]=img;
+    if(img->shortName().contains("Encoded", Qt::CaseInsensitive))
+        m_outputImageFullNameMap[img->filePath()]=img;
+    else
+        m_inputImageFullNameMap[img->filePath()]=img;
+	
     setEnabledImageActions(true);
     m_hasImageLoaded = true;
     tabWidget->setCurrentIndex(tabWidget->count()-1);
@@ -60,7 +65,23 @@ void MainWindow::closeCurrentTab()
         setEnabledImageActions(false);
         closeTabButton->setVisible(false);
     }
+	
+
+    QPointer<Image> curImage=currentImage();
+    QString name = curImage->filePath();
+    if(curImage->shortName().contains("Encoded", Qt::CaseInsensitive))
+    {
+        delete(m_outputImageFullNameMap[name]);
+        m_outputImageFullNameMap.remove(name);
+    }
+    else
+    {
+        delete(m_inputImageFullNameMap[name]);
+        m_inputImageFullNameMap.remove(name);
+    }
+	
     tabWidget->removeTab(tabWidget->currentIndex());
+
 
     if(!m_hasImageLoaded)
         tabWidget->addTab(new ImageWidget(tabWidget), "No image selected");
@@ -78,7 +99,8 @@ void MainWindow::closeTabByName(QString name)
         {
             tabWidget->removeTab(i);
             delete(m_imageMap[name]);
-            m_imageMap.remove(name);
+			m_imageMap.remove(name);
+           
             return;
         }
         i++;
@@ -246,7 +268,7 @@ void MainWindow::connectSignals()
 
     // close tab button
     closeTabButton = new QPushButton(this);
-    closeTabButton->setIcon(QIcon(":/menu/img/close.png"));
+    closeTabButton->setIcon(QIcon(":/buttons/close.png"));
     closeTabButton->setFlat(true);
     tabWidget->setCornerWidget(closeTabButton);
     closeTabButton->setVisible(false);

@@ -29,12 +29,16 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
         QPushButton* closeTabButton;
 
         QMap<QString, QPointer<Image> > m_imageMap;
+
+		
         bool m_hasImageLoaded;
 
         QPointer<Logger> m_logger;
     public:
         MainWindow(QWidget *parent = 0);
         ~MainWindow();
+        QMap<QString, QPointer<Image> > m_inputImageFullNameMap;
+        QMap<QString, QPointer<Image> > m_outputImageFullNameMap;
 
     private:
         void connectSignals();

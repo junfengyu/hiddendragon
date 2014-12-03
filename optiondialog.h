@@ -38,8 +38,7 @@ class OptionDialog : public QDialog, public Ui::OptionDialog
         void loadEncryptionTypes();
         bool isDialogReady();
         bool checkCryptoPassword();
-     //   FormatModuleInterface* currentFormatModule();
-       // CryptoModuleInterface* currentCryptoModule();
+
         Data::DataFormat currentCharset();
       
         void displayException(const QString& title, const HiddenDragonException e);
@@ -47,7 +46,7 @@ class OptionDialog : public QDialog, public Ui::OptionDialog
     private:
         void connectSignals();
 
-        protected slots:
+    protected slots:
         virtual void ok() = 0;
         void rejected();
         void selectFolder();
@@ -57,6 +56,7 @@ class OptionDialog : public QDialog, public Ui::OptionDialog
         void imageFormatChanged(const QString&);
         void cryptoPwd1TextEdited(QString);
         void cryptoPwd2TextEdited(QString);
+        void valueChanged();
      
 };
 
