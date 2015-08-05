@@ -9,6 +9,8 @@
 #include "hiddendragonexception.h"
 #include "ui_optiondialog.h"
 
+extern QMap<QString, QPointer<Image> > m_inputImageFullNameMap;
+extern QMap<QString, QPointer<Image> > m_outputImageFullNameMap;
 
 class OptionDialog : public QDialog, public Ui::OptionDialog
     {

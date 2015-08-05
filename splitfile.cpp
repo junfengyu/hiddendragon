@@ -1,25 +1,41 @@
 #include "splitfile.h"
 #include <QFile>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <math.h>
-#include "dbg.h"
+#include <QList>
+#include <QMap>
 
-const int BUFFER_SIZE= 8096;
-const int NAME_SIZE=2048;
-SplitFile::SplitFile(QString fileName, int pieces, QObject *parent) :
+SplitFile::SplitFile(const QString fileName, const int pieces, QObject *parent) :
     QObject(parent)
 {
     m_fileName=QString::null;
     m_pieces=0;
-    m_outputFileName=QString::null;
     if(isFileExist(fileName))
     {
         m_fileName=fileName;
         m_pieces=pieces;
-        m_outputFileName=fileName.append(".out");
+
+    }
+
+}
+
+
+SplitFile::SplitFile(const QStringList &splitFilesName, QObject *parent = 0)
+{
+
+    m_SplitFiles=splitFilesName;
+
+}
+
+void SplitFile::guessOrder()
+{
+    QString number;
+    int index=0;
+    foreach(const QString &str, m_SplitFiles)
+    {
+        index=str.lastIndexOf(".");
+        index++;
+        index=str.length()-index;
+        number=str.right(index);
+        m_filesMap.insert(number.toInt(),str);
     }
 
 }
@@ -42,120 +58,82 @@ SplitFile::~SplitFile()
 
 }
 
-int SplitFile::doSplit()
+QStringList &SplitFile::getSplitedFilesList()
 {
-    if(m_fileName==QString::null)
-        return -1;
-    int peices=m_pieces;
-    char *file_path= new char[m_fileName.toStdString().size()+1];
-    strcpy(file_path,m_fileName.toStdString().c_str());
-
-    void *buffer = malloc(BUFFER_SIZE);
-    char *p_name = malloc(NAME_SIZE);
-    FILE *fh = fopen(file_path, "rb");
-    struct stat stbuf;
-    check(stat(file_path, &stbuf) != -1, "Failed to get stat");
-    const double p_size = ceil(stbuf.st_size / peices);
-    int i = 0;
-    long cur_pos = 0;
-    long bf_size;
-    long max_ftell;
-        for (; i < peices; i++) {
-            sprintf(p_name, "%s.%d", file_path, i);
-            bf_size = BUFFER_SIZE;
-            if (i == peices - 1)
-                max_ftell = stbuf.st_size;
-            else
-                max_ftell = p_size * (i + 1);
-
-            cur_pos = ftell(fh);
-
-            FILE *fp = fopen(p_name, "wb");
-            check(fp, "Failed to open out file stream to : %s", p_name);
-
-            while (ftell(fh) <= max_ftell && fread(buffer, bf_size, 1, fh)) {
-                fwrite(buffer, bf_size, 1, fp);
-                if ((max_ftell - ftell(fh)) < BUFFER_SIZE)
-                    bf_size = max_ftell - ftell(fh);
-
-
-
-            }
-
-            fclose(fp);
-
-        }
-
-        free(buffer);
-        free(p_name);
-        fclose(fh);
-        return 1;  //success
-
-        error:
-            free(buffer);
-            free(p_name);
-            return 0; //0 error occured
+    return m_SplitFiles;
 }
 
-int doJoin()
+bool SplitFile::doSplit()
+{
+    if(m_fileName==QString::null)
+        return false;
+    QString originalFileName=m_fileName;
+    QFile file(m_fileName);
+    if (!file.open(QIODevice::ReadOnly))
+        return false;
+    QByteArray fileBuffer = file.readAll();
+    file.close();
+    long fileLength = fileBuffer.length();
+    QList<long>  splitedFilesList;
+    long eachLength= fileLength/m_pieces;
+    long lastFileLength=eachLength;
+    if(fileLength%m_pieces!=0)
+        lastFileLength=fileLength-(m_pieces-1)*eachLength;
+
+    for (int i=0; i< m_pieces; i++)
+    {
+       QString splitedFileName=originalFileName;
+       splitedFileName.append("."+QString::number(i));
+       m_SplitFiles << splitedFileName;
+       QFile outFile(splitedFileName);
+       QByteArray eachPiece;
+       if (!outFile.open(QIODevice::WriteOnly))
+           return false;
+       if(i!=(m_pieces-1)){
+            eachPiece=fileBuffer.left(eachLength);
+            fileBuffer.remove(0,eachLength);
+       }
+       else eachPiece=fileBuffer.right(lastFileLength);
+       outFile.write(eachPiece);
+       outFile.close();
+    }
+
+    return true;
+
+}
+QString &SplitFile::getOriginalFileName()
+{
+    return m_fileName;
+
+}
+
+bool SplitFile::doJoin()
 {
 
-    long buf_size;
-    char *p_name = malloc(NAME_SIZE);
-    char *mf_name = malloc(NAME_SIZE);
-    void *buffer = malloc(BUFFER_SIZE);
+    guessOrder();
+    QString tmpFileName=m_filesMap.value(0);
+    int index=tmpFileName.lastIndexOf(".");
+    QString originalFileName=tmpFileName.left(index);
+   // originalFileName.append(".out");
+    QByteArray totalFileBuffer;
+    QFile outFile(originalFileName);
+    m_fileName=originalFileName;
 
-    file_path
-    else
-       strcpy(mf_name, out_filename);
 
-        log_info("Joining files to: %s", mf_name);
-        FILE *fh = fopen(mf_name, "wb");
+    if (!outFile.open(QIODevice::WriteOnly))
+        return false;
+    foreach (int key, m_filesMap.keys())
+    {
+        QString splitedFileName=m_filesMap.value(key);
+        QFile file(splitedFileName);
+        if (!file.open(QIODevice::ReadOnly))
+            return false;
+        QByteArray fileBuffer = file.readAll();
+        file.close();
+        totalFileBuffer.append(fileBuffer);
 
-        struct stat stbuf;
-
-        int i = 0;
-        sprintf(p_name, "%s.%d", file_path, i);
-        while (stat(p_name, &stbuf) != -1) {
-
-            buf_size = BUFFER_SIZE;
-            log_info("Peice: %s", p_name);
-
-            //don't need to check here checked in the main while loop above ^
-            FILE *fp = fopen(p_name, "rb");
-
-            while (fread(buffer, buf_size, 1, fp)) {
-                fwrite(buffer, buf_size, 1, fh);
-
-                if ((stbuf.st_size - ftell(fp)) < BUFFER_SIZE) {
-                    buf_size = stbuf.st_size - ftell(fp);
-    //				printf("BUFFER SIZE: %d\n", buf_size);
-                }
-
-            }
-
-            i++;
-            sprintf(p_name, "%s.%d", file_path, i);
-            fclose(fp);
-
-        }
-
-        if(i>0)
-            log_info("done joining %d files to %s", i, mf_name);
-        else
-            log_info("Failed to find peices");
-
-        free(p_name);
-        free(mf_name);
-        free(buffer);
-        fclose(fh);
-        return 1;
-
-        error:
-            free(p_name);
-            free(mf_name);
-            free(buffer);
-            return 0;
-
+    }
+    outFile.write(totalFileBuffer);
+    outFile.close();
 
 }

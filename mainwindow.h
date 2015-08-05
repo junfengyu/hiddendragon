@@ -10,6 +10,7 @@
 #include "imagewidget.h"
 #include "logger.h"
 #include "image.h"
+#include "dropboxdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
         DecodeDialog decodeDialog;
 
         AboutDialog aboutDialog;
+        DropboxDialog dropboxDialog;
 
         QMenu* contextMenu;
         QPushButton* closeTabButton;
@@ -37,8 +39,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
     public:
         MainWindow(QWidget *parent = 0);
         ~MainWindow();
-        QMap<QString, QPointer<Image> > m_inputImageFullNameMap;
-        QMap<QString, QPointer<Image> > m_outputImageFullNameMap;
+
 
     private:
         void connectSignals();
@@ -56,6 +57,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
         void copy();
         void execDecodeDialog();
         void execEncodeDialog();
+        void execDropboxDialog();
 
         void execTakePhotoDialog();
 

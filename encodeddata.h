@@ -10,14 +10,8 @@
 #include "data.h"
 
 
-    //! EncodedData is a data manager used to read information bit per bit
-    /*! <b>Example:</b><br/>
-        EncodedData data("some text");<br/>
-        data.initialize(2);<br/>
-        data.read(); // returns the 2 first bits of the string
-     */
-    class EncodedData : public QObject
-    {
+class EncodedData : public QObject
+{
     private:
         //! Readable representation of data
         QPointer<Data> _data;
@@ -66,7 +60,7 @@
         static unsigned short int andOperator(unsigned short int);
     private:
         void checkPartialData();
-    };
+};
 
 
 

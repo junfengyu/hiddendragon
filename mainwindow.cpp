@@ -2,6 +2,10 @@
 #include "ui_mainwindow.h"
 #include "controller.h"
 #include <QProcess>
+#include <QDir>
+
+QMap<QString, QPointer<Image> > m_inputImageFullNameMap;
+QMap<QString, QPointer<Image> > m_outputImageFullNameMap;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -113,9 +117,6 @@ void MainWindow::setEnabledImageActions(const bool value)
     actionDecode->setEnabled(value);
     encodeButton->setEnabled(value);
     actionEncode->setEnabled(value);
-    takePhotoButton->setEnabled(value);
-    actionTakePhoto->setEnabled(value);
-    actionTakePhoto->setEnabled(value);
     actionCloseCurrent->setEnabled(value);
     actionCopy->setEnabled(value);
 }
@@ -231,8 +232,18 @@ void MainWindow::execDecodeDialog()
 
 void MainWindow::execTakePhotoDialog()
     {
-        QProcess::startDetached("D:\\WorkSpace\\Projects\\camera\\release\\camera.exe");
+        QString cameraPath=QDir::currentPath();
+
+        cameraPath.append("/camera/camera.exe");
+
+        QProcess::startDetached(cameraPath);
     }
+
+void MainWindow::execDropboxDialog()
+{
+
+     dropboxDialog.exec();
+}
 
 void MainWindow::connectSignals()
 {
@@ -245,6 +256,7 @@ void MainWindow::connectSignals()
     connect(actionTakePhoto, SIGNAL(triggered()), this, SLOT(execTakePhotoDialog()));
     connect(decodeButton, SIGNAL(pressed()), this, SLOT(execDecodeDialog()));
     connect(actionDecode, SIGNAL(triggered()), this, SLOT(execDecodeDialog()));
+    connect(dropboxButton,SIGNAL(pressed()),this,SLOT(execDropboxDialog()));
 
     // Menu actions
     connect(actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
@@ -256,7 +268,7 @@ void MainWindow::connectSignals()
 
     // Others
     connect(&encodeDialog, SIGNAL(encodedImage(QString)), this, SLOT(newImage(QString)));
-
+    connect(&dropboxDialog,SIGNAL(encodedFileDownloaded(QString)),this,SLOT(newImage(QString)));
     contextMenu = new QMenu(this);
     contextMenu->addAction(actionCloseCurrent);
     contextMenu->addSeparator();
@@ -271,7 +283,7 @@ void MainWindow::connectSignals()
     closeTabButton->setIcon(QIcon(":/buttons/close.png"));
     closeTabButton->setFlat(true);
     tabWidget->setCornerWidget(closeTabButton);
-    closeTabButton->setVisible(false);
+    //closeTabButton->setVisible(false);
     connect(closeTabButton, SIGNAL(pressed()), this, SLOT(closeCurrentTab()));
 }
 

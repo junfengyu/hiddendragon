@@ -5,12 +5,12 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT       += xml
+QT       += xml network testlib
 
 QMAKE_CXXFLAGS += -fpermissive
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-QT += network
+
 
 TARGET = hiddendragon
 TEMPLATE = app
@@ -40,7 +40,14 @@ SOURCES += main.cpp\
     blackdragon/bd.c \
     blackdragon/blackdragon.cpp \
     bmp/bmpsteg.cpp \
-    splitfile.cpp
+    splitfile.cpp \
+    dropbox/qdropbox.cpp \
+    dropbox/qdropboxaccount.cpp \
+    dropbox/qdropboxfile.cpp \
+    dropbox/qdropboxfileinfo.cpp \
+    dropbox/qdropboxjson.cpp \
+    dropboxclient.cpp \
+    dropboxdialog.cpp
 
 HEADERS  += mainwindow.h \
     aboutdialog.h \
@@ -73,7 +80,15 @@ HEADERS  += mainwindow.h \
     blackdragon/blackdragon.h \
     bmp/bmpsteg.h \
     splitfile.h \
-    dbg.h
+    dropbox/qdropbox.h \
+    dropbox/qdropboxaccount.h \
+    dropbox/qdropboxfile.h \
+    dropbox/qdropboxfileinfo.h \
+    dropbox/qdropboxjson.h \
+    dropbox/qtdropbox.h \
+    dropbox/qtdropbox_global.h \
+    dropboxclient.h \
+    dropboxdialog.h
 
 FORMS    += \
     ui/mainwindow.ui \

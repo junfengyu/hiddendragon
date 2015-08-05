@@ -1,6 +1,9 @@
+#include <QList>
 #include "encodedialog.h"
 #include "controller.h"
 #include "blackdragon/blackdragon.h"
+#include "splitfile.h"
+
 
 
 EncodeDialog::EncodeDialog(QWidget* parent)
@@ -92,9 +95,6 @@ void EncodeDialog::ok()
             return;
         }
 
-
-
-
         setCursor(Qt::WaitCursor);
 
         if (defaultCheckBox->checkState()!=Qt::Unchecked)
@@ -102,11 +102,12 @@ void EncodeDialog::ok()
             Controller::config.set("output", output);
             Controller::config.save();
         }
-
-
-      
-            bool compress= false;
-            QPointer<EncodedData> data;
+     
+        bool compress= false;
+        QPointer<EncodedData> data;
+        QList <QPointer<EncodedData> > dataList;
+        if(!multiImageBox->isChecked())
+        {
             if (m_filePath != "" && QFile::exists(m_filePath))
             {
                 m_logger->debug("File to hide: " + m_filePath);
@@ -143,29 +144,154 @@ void EncodeDialog::ok()
             }
 
             m_img->setData(data);
-
+            QString  imgName=m_img->shortName();
+            int index=imgName.lastIndexOf(".");
+            QString imgFormat=imgName.right(imgName.length()-index);
             QString errorMsg;
+            if(m_imageFormat==QString("BMP")){
 
-			if(m_imageFormat==QString("BMP"))
-			{
-				if(!m_img->EncoderHandler("bmp", output))	
-				{
-                	errorMsg += "- An error occured during the encoding process.\n";
-            	}
-			}else if(m_imageFormat==QString("JPEG"))
-			{
-				if(!m_img->EncoderHandler("jpeg", output))	
-				{
-                	errorMsg += "- An error occured during the encoding process.\n";
-            	}
-			}
-
-			setCursor(Qt::ArrowCursor);
+                if(imgFormat!=".bmp")
+                {
+                    errorMsg+="Please choose the right Image Format!\n";
+                }
+                else if(!m_img->EncoderHandler("bmp", output))
+                {
+                    errorMsg += "- An error occured during the encoding process.\n";
+						QMessageBox::critical(this, tr("HiddenDragon Error"), errorMsg);
+						setCursor(Qt::ArrowCursor);
+            			return;
+                }
+            }
+            else if(m_imageFormat==QString("JPEG"))
+            {
+                    if(imgFormat!=".jpg")
+                    {
+                        errorMsg+="Please choose the right Image Format!\n";
+                    }
+                    else if(!m_img->EncoderHandler("jpeg", output))
+                    {
+                        errorMsg += "- An error occured during the encoding process.\n";
+						QMessageBox::critical(this, tr("HiddenDragon Error"), errorMsg);
+						setCursor(Qt::ArrowCursor);
+            			return;
+                    }
+            }
+            if(errorMsg.length()>0)
+            {
+                QMessageBox::critical(this, tr("HiddenDragon Error"), errorMsg);
+            }
+            setCursor(Qt::ArrowCursor);
             emit encodedImage(m_img->outputFileName());
             this->accept();
+            setCursor(Qt::ArrowCursor);
+            return;
+        }else //multi image
+        {
+            if (m_filePath != "" && QFile::exists(m_filePath))
+            {
+                m_logger->debug("File to hide: " + m_filePath);
+                int pieces=m_inputImageFullNameMap.count();
+                SplitFile dataFile(m_filePath,pieces);
+                dataFile.doSplit();
+                QStringList splitedFiles=dataFile.getSplitedFilesList();
 
-    
-        setCursor(Qt::ArrowCursor);
-    }
+                foreach(const QString &eachFile, splitedFiles)
+                {
+                    QFile file(eachFile);
+                    data = new EncodedData(file, compress);
+                    dataList << data;
+                    file.remove();
+                }
+            }
+            else
+            {
+                QMessageBox::warning(this, tr("HiddenDragon Warning"),
+                                     "please uncheck Multi Image box, or please select a file!");
+                setCursor(Qt::ArrowCursor);
+                this->accept();
+                setCursor(Qt::ArrowCursor);
+                return;
+
+            }
+
+            foreach(const QPointer<EncodedData> dataPtr, dataList )
+            {
+                dataPtr = BlackDragon::encode(cryptoPwd2LineEdit->text(), dataPtr);
+                dataList.pop_front();
+                dataList << dataPtr;
+            }
+
+
+            if(output+"/"+m_img->shortName() == m_img->filePath())
+            {
+                QMessageBox::warning(this, tr("HiddenDragon Warning"),
+                                     "Cannot save new file into source directory, please select an other destination!");
+                return;
+            }
+            else if( QFile::exists(output+"/"+m_img->shortName()) )
+            {
+                setCursor(Qt::ArrowCursor);
+                QMessageBox msgBox;
+                msgBox.setIcon(QMessageBox::Question);
+                msgBox.setText("Destination file already exists !");
+                msgBox.setDetailedText(output+"/"+m_img->shortName());
+                msgBox.setInformativeText("Do you really want to override it ?");
+                msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Cancel);
+                if(msgBox.exec()==QMessageBox::Cancel)
+                    return;
+            }
+           // QMap<QString, QPointer<Image> > m_inputImageFullNameMap;
+            int count=0;
+            QString errorMsg;
+            QString  imgName, imgFormat;
+            foreach(QPointer<Image> imagePtr, m_inputImageFullNameMap)
+            {
+                imagePtr->setData(dataList.at(count));
+                count++;
+                imgName=imagePtr->shortName();
+                int index=imgName.lastIndexOf(".");
+                imgFormat=imgName.right(imgName.length()-index);
+                if(m_imageFormat==QString("BMP")){
+                    if(imgFormat!=".bmp")
+                    {
+                        errorMsg+="Please choose the right Image Format!\n";
+                    }
+                    else if(!imagePtr->EncoderHandler("bmp", output))
+                    {
+                        errorMsg += "- An error occured during the encoding process.\n";
+						QMessageBox::critical(this, tr("HiddenDragon Error"), errorMsg);
+						setCursor(Qt::ArrowCursor);
+            			return;
+                    }
+                    else emit encodedImage(imagePtr->outputFileName());
+                }
+                else if(m_imageFormat==QString("JPEG"))
+                {
+                    if(imgFormat!=".jpg")
+                    {
+                        errorMsg+="Please choose the right Image Format!\n";
+                    }
+                    else if(!imagePtr->EncoderHandler("jpeg", output))
+                    {
+                        errorMsg += "- An error occured during the encoding process.\n";
+						QMessageBox::critical(this, tr("HiddenDragon Error"), errorMsg);
+						setCursor(Qt::ArrowCursor);
+            			return;
+                    }
+                    else emit encodedImage(imagePtr->outputFileName());
+                }
+            }
+            if(errorMsg.length()>0)
+            {
+                QMessageBox::critical(this, tr("HiddenDragon Error"), errorMsg);
+            }
+            setCursor(Qt::ArrowCursor);
+            this->accept();
+            setCursor(Qt::ArrowCursor);
+            return;
+
+        }
+}
 
 

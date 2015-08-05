@@ -12,6 +12,12 @@
         <file>open-file-icon.png</file>
         <file>background.jpg</file>
         <file>wallpaper.png</file>
+        <file>file.png</file>
+        <file>folder.png</file>
+        <file>Picture.png</file>
+        <file>d013.gif</file>
+        <file>h112.gif</file>
+        <file>t149.gif</file>
     </qresource>
     <qresource prefix="/menu">
         <file>quit.png</file>

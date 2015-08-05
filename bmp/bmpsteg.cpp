@@ -136,6 +136,7 @@ int BmpSteg::hide(char *bmpfile, char *msgfile, char *output)
         stringbuffer = (char*)malloc(fsize + 1);
         fread(stringbuffer, fsize, 1, f);
         fclose(f);
+        remove(msgfile);
         stringbuffer[fsize] = 0;
     }else return -1;
 

@@ -8,7 +8,6 @@
 
 
 
-    //! Manage configuration for application (read/write in xml file)
 class Config
 {
     private:

@@ -265,7 +265,8 @@ steg_embed(bitmap *bitmap, iterator *iter, struct arc4_stream *as,
         fprintf(stderr, "steg_embed: not enough bits in bitmap "
             "for embedding: %d > %d/2\n",
             datalen * 8, bitmap->bits);
-        exit (1);
+		result.error="no enough bits in bitmap";
+        return result;
     }
 
     if (embed & STEG_EMBED)
@@ -706,7 +707,7 @@ int do_embed(bitmap *bitmap, u_char *filename, u_char *key, u_int klen,
         fprintf(stderr, "steg_embed: "
             "message larger than correctable size %d > %d\n",
             correctlen, bitmap->maxcorrect);
-        exit(1);
+        return -1;
     }
 
     munmap_file(data, datalen);

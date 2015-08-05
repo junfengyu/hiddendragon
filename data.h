@@ -7,7 +7,7 @@
 #include <QByteArray>
 #include "logger.h"
 
-//! Data encapsulation
+
 class Data : public QObject
     {
     public:

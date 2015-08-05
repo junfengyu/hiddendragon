@@ -1,6 +1,10 @@
+#include <QMap>
+
 #include "optiondialog.h"
 #include "controller.h"
 #include "hiddendragonexception.h"
+#include "mainwindow.h"
+
 
 OptionDialog::OptionDialog(QWidget* parent)
         : QDialog(parent)
@@ -222,6 +226,26 @@ void OptionDialog::valueChanged()
         return;
     if(multiImageBox->isChecked())
     {
+
+        QMap<QString, QPointer<Image> > &mapOfImages = m_inputImageFullNameMap;
+        foreach (QString fileNameKey, mapOfImages.keys())
+        {
+            if(QFile::exists(fileNameKey))
+            {
+                    QPointer<Image> img = mapOfImages.value(fileNameKey);
+                    if(img->isNull())
+                    {
+                        QMessageBox::warning(this, tr("HiddenDragon Warning"),
+                                        "some thing error occured during caculate capacity '"
+                                        + fileNameKey);
+                        return;
+                    }
+                    total+=img->capacity(m_imageFormat);
+
+            }
+            else
+               m_logger->warning("Cannot load '" + fileNameKey + "'\n file doesn't exist !");
+        }
 
     }
     else

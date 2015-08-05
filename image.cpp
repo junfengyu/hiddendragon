@@ -26,11 +26,10 @@
 	
 #include "outguess.h"
 	
-	
-	extern int steg_foil;
-	extern int steg_foilfail;
-	extern int steg_stat;
-	extern int steg_offset[MAX_SEEK];
+extern int steg_foil;
+extern int steg_foilfail;
+extern int steg_stat;
+extern int steg_offset[MAX_SEEK];
 	
 	handler *handlers[] = {
 		&pnm_handler,
@@ -188,7 +187,7 @@
                 FILE *fin = stdin, *fout = stdout;
                 image *image;
                 handler *srch = NULL, *dsth = NULL;
-                char *param = NULL;
+                char param[20] = "100";
                 bitmap bitmap;
                 config cfg1, cfg2;
                 char mark = 0, doretrieve = 0;
@@ -263,6 +262,7 @@
 
                     fclose(fin);
                     fclose(fout);
+                    remove(outputFileName);
 
                     free(bitmap.bitmap);
                     free(bitmap.locked);
@@ -521,7 +521,7 @@ bool Image::EncoderHandler( QString imageFormat,  QString outputPath)
 		FILE *fin = stdin, *fout = stdout;
 		image *image;
 		handler *srch = NULL, *dsth = NULL;
-		char *param = NULL;
+        char param[20] = "100";
 		unsigned char *encdata;
 		bitmap bitmap;	/* Extracted bits that we may modify */
 		iterator iter;
@@ -609,7 +609,22 @@ bool Image::EncoderHandler( QString imageFormat,  QString outputPath)
 						(float)100*bitmap.maxcorrect/bitmap.bits);
 			}
 		
-			do_embed(&bitmap, data, key, strlen(key), &cfg1, &cumres);
+			int result=do_embed(&bitmap, data, key, strlen(key), &cfg1, &cumres);
+			if(result==-1)
+			{
+				free(bitmap.bitmap);
+				free(bitmap.locked);
+		
+				free_pnm(image);
+        		remove(chartmpFileName);
+
+				m_outputFilePath = OutPutFileName;
+				delete charFilePath;
+				delete charOutPutFile;
+				delete chartmpFileName;
+        		return false;
+			}
+				
 		
 		
 			if (foil) {
@@ -684,6 +699,7 @@ bool Image::EncoderHandler( QString imageFormat,  QString outputPath)
 		free(bitmap.locked);
 		
 		free_pnm(image);
+        remove(chartmpFileName);
 
 		m_outputFilePath = OutPutFileName;
 		delete charFilePath;

@@ -10,7 +10,7 @@
 
 class DecodeDialog : public OptionDialog
 {
-        Q_OBJECT;
+    Q_OBJECT;
 
     public:
         DecodeDialog(QWidget* parent=0);

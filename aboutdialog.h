@@ -7,13 +7,13 @@
 
 
 class AboutDialog : public QDialog, public Ui::AboutDialog
-    {
-        Q_OBJECT;
+{
+    Q_OBJECT;
 
     public:
     AboutDialog(QWidget* parent=0) : QDialog(parent){ setupUi(this); }
 
-    };
+};
 
 
 #endif

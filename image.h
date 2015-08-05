@@ -10,7 +10,7 @@
 
     //! Generic representation of image which can load and hide specific data according to it's format
 class Image : public QPixmap, public QObject
-    {
+{
     protected:
 		QString m_imageFormat;
         //! Embedded data
@@ -59,7 +59,7 @@ class Image : public QPixmap, public QObject
     protected:
         QString fileName(QString filePath);
         void computeNewFileName(QString extension);
-    };
+};
 
 
 

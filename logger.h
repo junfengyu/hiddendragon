@@ -7,7 +7,7 @@
 #include <QString>
 
 
-    //! Provides methods for multi-level logging into logfile and console
+
 class Logger : public QObject
 {
     public:
